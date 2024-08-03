@@ -1,10 +1,10 @@
-import allure
+
 from pages.login_page import LoginPage
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-@allure.feature("Login Feature")
+
 def test_login(driver, login_data):
     login_page = LoginPage(driver)
     login_page.login(login_data["valid_email"], login_data["valid_password"])
