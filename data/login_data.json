@@ -1,0 +1,13 @@
+{
+    "valid_email": "bidmarespond.io@yopmail.com",
+    "valid_password": "Bismarespond.io1",
+
+    "invalid_email": "bismarespond.io@yopmail.com",
+    "valid_password": "Bismarespond.io1",
+
+    "dashboard_url": "https://app.respond.io/space/241150/dashboard",
+     "login_url": "https://app.respond.io/user/login"
+}
+
+
+
