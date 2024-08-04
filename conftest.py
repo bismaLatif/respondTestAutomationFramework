@@ -15,6 +15,10 @@ def login_data():
     return load_json('data/login_data.json')
 
 @pytest.fixture(scope="module")
+def workflow_data():
+    return load_json('data/workflow_data.json')
+
+@pytest.fixture(scope="module")
 def api_endpoints():
     return load_json('data/api_endpoints.json')
 

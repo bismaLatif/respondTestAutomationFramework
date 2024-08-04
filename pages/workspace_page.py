@@ -7,28 +7,27 @@ from pages.base_page import BasePage
 
 class WorkspacePage(BasePage):
     # Define locators for the workspace page
-    new_workspace_button = (By.CSS_SELECTOR, '.dls-text-text-selected.dls-txt-button')
-    add_workspace = (By.XPATH,
-                     '//div[text()="My New Workspace" and contains(@class, "dls-text-text-selected") and contains(@class, "dls-txt-button")]')
     add_workflow_button = (By.CSS_SELECTOR, 'button[data-pw="btn-add-workflow"]')
+    navigate_to_workflow_screen = (By.CSS_SELECTOR,
+                                   "a[href='/space/241150/workflows'] .v-list-item__append svg.dls-h-icon-md.dls-w-icon-md.dls-text-icon-md.dls-text-icon-primary.dls-fill-icon-primary")
     start_from_scratch_button = (By.XPATH, '//button[.//span[text()="Start From Scratch"]]')
-    input_name = (By.ID, "input-144")
-    input_description = (By.ID, "input-146")
-    create_workflow_button = (By.CSS_SELECTOR, 'span.dls-txt-button.dls-inline-flex')
+    input_name = (By.CSS_SELECTOR, "input[placeholder='Name your workflow (only visible internally)']")
+    input_description = (By.CSS_SELECTOR, "input[placeholder='Briefly describe your workflow for internal reference']")
+    create_workflow_button = (By.XPATH, "//span[text()='Create']")
     modal_locator = (By.XPATH, "//div[contains(text(), 'Add Workflow')]")
+    actual_workflow_name = (By.XPATH, "//div[@class='dls-max-w-[300px] dls-truncate']")
 
     def __init__(self, driver):
         super().__init__(driver)
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 20)
 
-    def navigate_to_workspace_action(self):
-        # Use locator directly without unpacking
-        self.wait.until(EC.visibility_of_element_located(self.new_workspace_button)).click()
-
-    def add_workspace_screen(self):
-        # Use locator directly without unpacking
-        self.wait.until(EC.visibility_of_element_located(self.add_workspace)).click()
-        self.driver.get("https://app.respond.io/space/241198/workflows")
+    def navigate_to_workspace(self):
+        # Wait until the element is present and visible, then click it
+        svg_element = self.wait.until(
+            EC.presence_of_element_located(self.navigate_to_workflow_screen)
+        )
+        svg_element.click()
+        time.sleep(2)
 
     def click_add_workflow_button(self):
         # Use locator directly without unpacking
@@ -36,27 +35,35 @@ class WorkspacePage(BasePage):
 
     def click_start_from_scratch(self):
         self.wait.until(EC.element_to_be_clickable(self.start_from_scratch_button)).click()
-    def fill_modal_form(self, name, description):
-        # Fill in the input fields in the modal
-        name_input = self.wait.until(EC.visibility_of_element_located(self.input_name))
-        name_input.clear()
-        name_input.send_keys(name)
 
-        description_input = self.wait.until(EC.visibility_of_element_located(self.input_description))
-        description_input.clear()
-        description_input.send_keys(description)
-        # Click the create workflow button
-        create_button = self.wait.until(EC.element_to_be_clickable(self.create_workflow_button))
-        create_button.click()
-    def get_page_text(self):
-            element = WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, '.dls-max-w-[300px].dls-truncate'))
+    def enter_workflow_name(self, name):
+        # Wait for the input element to be present
+        name_element = self.wait.until(
+            EC.presence_of_element_located(self.input_name)
         )
-            return element.text
+        # Clear the input field if needed and enter the new name
 
-    def test_truncated_text(driver):
-        assert driver.get_page_text() == "test"
+        name_element.send_keys(name)
 
+    def enter_workflow_description(self, description):
+        # Wait for the input element to be present using the placeholder text
+        description_element = self.wait.until(
+            EC.presence_of_element_located(self.input_description)
+        )
+        description_element.send_keys(description)
 
+    def click_create_button(self):
+        # Wait for the button with the text "Create" to be clickable
+        create_button = self.wait.until(
+            EC.element_to_be_clickable(self.create_workflow_button)
+        )
+        create_button.click()
 
-
+    def verify_text_presence(self, expected_workflow_name):
+        # Wait for the div with the specified text to be present
+        self.wait.until(
+            EC.text_to_be_present_in_element(self.actual_workflow_name
+                                             ,
+                                             expected_workflow_name
+                                             )
+        )
