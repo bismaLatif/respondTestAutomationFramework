@@ -1,11 +1,12 @@
+import pytest
 
 from pages.login_page import LoginPage
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-
-def test_login(driver, login_data):
+@pytest.mark.description("Verifies the functionality of valid login.")
+def test_valid_login(driver, login_data):
     login_page = LoginPage(driver)
     login_page.login(login_data["valid_email"], login_data["valid_password"])
     wait = WebDriverWait(driver, 20)  # Adjust timeout as needed
